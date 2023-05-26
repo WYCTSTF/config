@@ -1,66 +1,81 @@
+# PS4=$'\\\011%D{%s%6.}\011%x\011%I\011%N\011%e\011'
+# exec 3>&2 2>/tmp/zshstart.$$.log
+# setopt xtrace prompt_subst
+
+autoload -U +X bashcompinit && bashcompinit
+autoload -U +X compinit && compinit
+
+####################  alias  #################### 
 alias py=python
 alias nvi=nvim
-alias hexo='npx hexo'
+alias ll='ls -l'
+alias lla='ll -a'
+alias lsa='ls -a'
+alias ..='cd ..'
+alias cdf='cd $(find * -type d | fzf)'
+alias gst='git status'
+alias gl='git pull'
+alias gp='git push'
+alias ga='git add'
+alias gcmsg='git commit -m'
+alias ~='cd ~'
+
+####################  variables  ####################
+
+export EDITOR="nvim"
+export VCPKG_ROOT="/Users/syh/vcpkg"
+export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+# LLVM path
+# export PS1="%n@%m %1~ %#"
+# export PS1="%n@%m | 中华有为  | 你说的对，但是我玩原神🤣👉 ｜ 锐刻五代 - 维新派 
+# %~: "
+export PS1="╭─%n@%m | HUAWEI 
+╰─%B%(!.#.$)%b %~ "
 
 export NVM_DIR="$HOME/.nvm"
+
+####################  PATH  ####################
+
+PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+PATH="/Users/syh/.ghcup/bin:$PATH"
+
+####################  auto completions  ####################
+
+if type brew &>/dev/null; then
+FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+fi
+
+# nvm
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-export ZSH=$HOME/.oh-my-zsh
-export EDITOR="nvim"
-export VCPKG_ROOT="/Users/syh/vcpkg"
-
-export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
-
-ZSH_THEME="bira"
-
-plugins=(
-	git
-	zsh-syntax-highlighting
-	zsh-autosuggestions
-)
-
-# PATH
-PATH="/opt/homebrew/opt/gawk/libexec/gnubin:$PATH"
-PATH="/opt/homebrew/bin:/opt/homebrew/opt/llvm/bin:$PATH"
-PATH="/opt/homebrew/sbin:$PATH"
-PATH="/usr/local/mysql/support-files:$PATH"
-PATH="/Users/syh/.ghcup/bin:$PATH"
-PATH="/usr/local/texlive/2021/bin/universal-darwin:$PATH"
-PATH="/opt/homebrew/Cellar:$PATH"
-
-setopt NO_CLOBBER
-unsetopt beep
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-source $ZSH/oh-my-zsh.sh
-source ~/.ghcup/env
+# auto suggestion plugin
+source /opt/homebrew/Cellar/zsh-autosuggestions/0.7.0/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# command syntax highlighting check plugin
+source /opt/homebrew/Cellar/zsh-syntax-highlighting/0.7.1/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# vcpkg completion
 source /Users/syh/vcpkg/scripts/vcpkg_completion.zsh
+# fzf instead zsh default completion
+source ~/somewhere/fzf-tab.plugin.zsh
+# haskell-ghc env
+source ~/.ghcup/env
+# fzf integrate
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-autoload bashcompinit
-bashcompinit
+####################  key bindings  ####################
 
-# brew autocompletion
-if type brew &>/dev/null; then
-	FPATH=$(brew --prefix)/share/zsh/site-functions:$FPATH
+bindkey "^[[1;3C" forward-word
+bindkey "^[[1;3D" backward-word
 
-	autoload -Uz compinit
-	compinit
-fi
+####################  start up  ####################
+
+# unsetopt xtrace
+# exec 2>&3 3>&-
+
+autoload -Uz vcs_info
+precmd_vcs_info() { vcs_info }
+precmd_functions+=( precmd_vcs_info )
+	setopt prompt_subst
+	RPROMPT=\$vcs_info_msg_0_
+# PROMPT=\$vcs_info_msg_0_'%# '
+zstyle ':vcs_info:git:*' formats '%b'
