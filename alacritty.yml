@@ -1,5 +1,9 @@
 shell:
   program: /opt/homebrew/bin/fish
+  args:
+    - --login
+    - --command
+    - "tmux new-session -A -D -s main"
 
 # 设置字体
 font:
@@ -17,7 +21,7 @@ font:
     style: Book
 
   # 字大小
-  size: 14.0
+  size: 16
 
   offset:
     x: 0
@@ -26,14 +30,46 @@ font:
     x: 0
     y: 3
 
+colors:
+  # Default colors
+  primary:
+    background: '0x2D2A2E'
+    foreground: '0xfff1f3'
+
+  # Normal colors
+  normal:
+    black:   '0x2c2525'
+    red:     '0xfd6883'
+    green:   '0xadda78'
+    yellow:  '0xf9cc6c'
+    blue:    '0xf38d70'
+    magenta: '0xa8a9eb'
+    cyan:    '0x85dacc'
+    white:   '0xfff1f3'
+
+  # Bright colors
+  bright:
+    black:   '0x72696a'
+    red:     '0xfd6883'
+    green:   '0xadda78'
+    yellow:  '0xf9cc6c'
+    blue:    '0xf38d70'
+    magenta: '0xa8a9eb'
+    cyan:    '0x85dacc'
+    white:   '0xfff1f3'
+
 window:
-  padding:
-    x: 20
-    y: 22
+#   padding:
+#     x: 20
+#     y: 22
+  startup_mode: SimpleFullscreen
   decorations: buttonless
   dimensions:
     columns: 130
     lines: 30
+
+  # opacity: 0.9
+    
 
 scrolling:
   # 回滚缓冲区中的最大行数,指定“0”将禁用滚动。
@@ -80,13 +116,12 @@ key_bindings:
   - { key: X,        mods: Alt,     chars: "\x1bx"                       }
   - { key: Y,        mods: Alt,     chars: "\x1by"                       }
   - { key: Z,        mods: Alt,     chars: "\x1bz"                       }
-  - { key: Key0,     mods: Alt,     chars: "º"                           }
-  - { key: Key1,     mods: Alt,     chars: "¡"                           }
-  - { key: Key2,     mods: Alt,     chars: "€"                           }
-  - { key: Key3,     mods: Alt,     chars: "#"                           }
-  - { key: Key4,     mods: Alt,     chars: "¢"                           }
-  - { key: Key5,     mods: Alt,     chars: "∞"                           }
-  - { key: Key6,     mods: Alt,     chars: "§"                           }
-  - { key: Key7,     mods: Alt,     chars: "¶"                           }
-  - { key: Key8,     mods: Alt,     chars: "•"                           }
-  - { key: Key9,     mods: Alt,     chars: "ª"                           }
+  - { key: Key1, mods: Command, chars: "\x1c1" } # go to tab 1..9
+  - { key: Key2, mods: Command, chars: "\x1c2" }
+  - { key: Key3, mods: Command, chars: "\x1c3" }
+  - { key: Key4, mods: Command, chars: "\x1c4" }
+  - { key: Key5, mods: Command, chars: "\x1c5" }
+  - { key: Key6, mods: Command, chars: "\x1c6" }
+  - { key: Key7, mods: Command, chars: "\x1c7" }
+  - { key: Key8, mods: Command, chars: "\x1c8" }
+  - { key: Key9, mods: Command, chars: "\x1c9" }

@@ -8,6 +8,11 @@ set undodir=~/.vim/undodir
 set path+=**
 set wildmenu
 
+set expandtab
+
+set splitbelow
+set splitright
+
 set nu rnu
 set ai cin
 set ts=2 sw=2
@@ -41,5 +46,6 @@ nnoremap h <C-w>h
 nnoremap j <C-w>j
 nnoremap k <C-w>k
 nnoremap l <C-w>l
+nnoremap <C-p> :FZF<CR>
 
 set rtp+=/opt/homebrew/opt/fzf
