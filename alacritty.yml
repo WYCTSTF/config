@@ -1,5 +1,5 @@
 shell:
-  program: /opt/homebrew/bin/fish
+  program: /bin/zsh
   args:
     - --login
     - --command
@@ -21,7 +21,7 @@ font:
     style: Book
 
   # 字大小
-  size: 16
+  size: 14
 
   offset:
     x: 0
