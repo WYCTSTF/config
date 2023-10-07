@@ -1,9 +1,9 @@
 shell:
-  program: /bin/zsh
+  program: /bin/bash
   args:
-    - --login
-    - --command
-    - "tmux new-session -A -D -s main"
+    - -l
+    - -c
+    - "tmux new-session -D -A -s main"
 
 # 设置字体
 font:
@@ -30,46 +30,92 @@ font:
     x: 0
     y: 3
 
+# Colors (Aura Theme)
 colors:
   # Default colors
   primary:
-    background: '0x2D2A2E'
-    foreground: '0xfff1f3'
+    background: '#15141b'
+    foreground: '#edecee'
+
+  cursor:
+    cursor: '#a277ff'
+
+  selection:
+    text: CellForeground
+    background: '#29263c'
 
   # Normal colors
   normal:
-    black:   '0x2c2525'
-    red:     '0xfd6883'
-    green:   '0xadda78'
-    yellow:  '0xf9cc6c'
-    blue:    '0xf38d70'
-    magenta: '0xa8a9eb'
-    cyan:    '0x85dacc'
-    white:   '0xfff1f3'
+    black: '#110f18'
+    red: '#ff6767'
+    green: '#61ffca'
+    yellow: '#ffca85'
+    blue: '#a277ff'
+    magenta: '#a277ff'
+    cyan: '#61ffca'
+    white: '#edecee'
 
   # Bright colors
   bright:
-    black:   '0x72696a'
-    red:     '0xfd6883'
-    green:   '0xadda78'
-    yellow:  '0xf9cc6c'
-    blue:    '0xf38d70'
-    magenta: '0xa8a9eb'
-    cyan:    '0x85dacc'
-    white:   '0xfff1f3'
+    black: '#4d4d4d'
+    red: '#ff6767'
+    green: '#61ffca'
+    yellow: '#ffca85'
+    blue: '#a277ff'
+    magenta: '#a277ff'
+    cyan: '#61ffca'
+    white: '#edecee'
+
+  search:
+    matches:
+      foreground: '#000000'
+      background: '#ffffff'
+    focused_match:
+      foreground: '#ffffff'
+      background: '#9F7AF5'
+# colors:
+#   # Default colors
+#   primary:
+#     background: '0x2D2A2E'
+#     foreground: '0xfff1f3'
+# 
+#   # Normal colors
+#   normal:
+#     black:   '0x2c2525'
+#     red:     '0xfd6883'
+#     green:   '0xadda78'
+#     yellow:  '0xf9cc6c'
+#     blue:    '0xf38d70'
+#     magenta: '0xa8a9eb'
+#     cyan:    '0x85dacc'
+#     white:   '0xfff1f3'
+# 
+#   # Bright colors
+#   bright:
+#     black:   '0x72696a'
+#     red:     '0xfd6883'
+#     green:   '0xadda78'
+#     yellow:  '0xf9cc6c'
+#     blue:    '0xf38d70'
+#     magenta: '0xa8a9eb'
+#     cyan:    '0x85dacc'
+#     white:   '0xfff1f3'
 
 window:
-#   padding:
-#     x: 20
-#     y: 22
-  startup_mode: SimpleFullscreen
-  decorations: buttonless
+  padding:
+#x: 20
+   y: 22
+  # startup_mode: Windowed
+  decorations: transparent
   dimensions:
-    columns: 130
+    columns: 140
     lines: 30
 
-  # opacity: 0.9
+  opacity: 0.9
     
+# cursor:
+#   style:
+#     shape: Beam
 
 scrolling:
   # 回滚缓冲区中的最大行数,指定“0”将禁用滚动。
