@@ -1,6 +1,6 @@
 function fish_prompt -d "Ah?"
-printf '╭─%s@%s | HUAWEI 
-╰─%s%s%s: ' 'wcb-dad' "M1 Air" (set_color $fish_color_cwd) (prompt_pwd) (set_color normal)
+printf '╭─%s@%s
+╰─%s%s%s: ' 'wcb-dad ' " HUAWEI M1 Air " (set_color $fish_color_cwd) (prompt_pwd) (set_color normal)
 # %s%s: ' 'wcb-dad' (hostname|cut -d . -f 1) (set_color $fish_color_cwd) (prompt_pwd) (set_color normal)
 end
 
