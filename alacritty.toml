@@ -1,54 +1,23 @@
 live_config_reload = true
 
-# [colors]
-# draw_bold_text_with_bright_colors = false
-# 
-# [colors.bright]
-# black = "0x57606a"
-# blue = "0x218bff"
-# cyan = "0x1b7c83"
-# green = "0x1a7f37"
-# magenta = "0x8250df"
-# red = "0xa40e26"
-# white = "0x6e7781"
-# yellow = "0x633c01"
-# 
-# [colors.cursor]
-# cursor = "0x1f2328"
-# text = "0xffffff"
-# 
-# [colors.normal]
-# black = "0x24292f"
-# blue = "0x0969da"
-# cyan = "0x1b7c83"
-# green = "0x116329"
-# magenta = "0x8250df"
-# red = "0xcf222e"
-# white = "0x6e7781"
-# yellow = "0x4d2d00"
-# 
-# [colors.primary]
-# background = "0xffffff"
-# foreground = "0x1F2328"
-
 [font]
-size = 12
+size = 13
 
 [font.bold]
-family = "Monaco Nerd Font"
+family = "Monaco Nerd Font Mono"
 
 [font.bold_italic]
-family = "Monaco Nerd Font"
+family = "Monaco Nerd Font Mono"
 
 [font.glyph_offset]
 x = 0
 y = 3
 
 [font.italic]
-family = "Monaco Nerd Font"
+family = "Monaco Nerd Font Mono"
 
 [font.normal]
-family = "Monaco Nerd Font"
+family = "Monaco Nerd Font Mono"
 
 [font.offset]
 x = 0
@@ -202,47 +171,47 @@ mods = "Alt"
 [[keyboard.bindings]]
 chars = "\u001C1"
 key = "Key1"
-mods = "Command"
+mods = "Alt"
 
 [[keyboard.bindings]]
 chars = "\u001C2"
 key = "Key2"
-mods = "Command"
+mods = "Alt"
 
 [[keyboard.bindings]]
 chars = "\u001C3"
 key = "Key3"
-mods = "Command"
+mods = "Alt"
 
 [[keyboard.bindings]]
 chars = "\u001C4"
 key = "Key4"
-mods = "Command"
+mods = "Alt"
 
 [[keyboard.bindings]]
 chars = "\u001C5"
 key = "Key5"
-mods = "Command"
+mods = "Alt"
 
 [[keyboard.bindings]]
 chars = "\u001C6"
 key = "Key6"
-mods = "Command"
+mods = "Alt"
 
 [[keyboard.bindings]]
 chars = "\u001C7"
 key = "Key7"
-mods = "Command"
+mods = "Alt"
 
 [[keyboard.bindings]]
 chars = "\u001C8"
 key = "Key8"
-mods = "Command"
+mods = "Alt"
 
 [[keyboard.bindings]]
 chars = "\u001C9"
 key = "Key9"
-mods = "Command"
+mods = "Alt"
 
 [scrolling]
 history = 100000
@@ -254,11 +223,12 @@ semantic_escape_chars = ",│`|:\"' ()[]{}<>"
 
 [shell]
 args = ["-l", "-c", "tmux new-session -A -D -s main"]
-program = "/opt/homebrew/bin/fish"
+program = "/usr/bin/fish"
 
 [window]
 decorations = "None"
-startup_mode = "Windowed"
+startup_mode = "Maximized"
+# startup_mode = "FullScreen"
 opacity = 0.7
 
 [window.dimensions]
