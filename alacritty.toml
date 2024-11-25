@@ -1,7 +1,9 @@
-live_config_reload = true
+[colors.primary]
+background = '0x300A33'
+foreground = '0xD3D7CF'
 
 [font]
-size = 12
+size = 15
 
 [font.bold]
 family = "Monaco Nerd Font Mono"
@@ -221,15 +223,15 @@ multiplier = 4
 save_to_clipboard = true
 semantic_escape_chars = ",│`|:\"' ()[]{}<>"
 
-[shell]
+[terminal.shell]
 args = ["-l", "-c", "tmux new-session -A -D -s main"]
 program = "/usr/bin/fish"
 
 [window]
 decorations = "None"
-startup_mode = "Maximized"
+startup_mode = "Windowed"
 # startup_mode = "FullScreen"
-opacity = 0.7
+# opacity = 0.7
 
 [window.dimensions]
 columns = 140
@@ -238,4 +240,9 @@ lines = 35
 [window.padding]
 x = 0
 y = 0
+
+[general]
+live_config_reload = true
+
+[terminal]
 # y = 22
