@@ -27,6 +27,12 @@ pwsh -File .\scripts\bootstrap.ps1 -Apply
 
 已有文件会备份为 `wt-tabs.ts.bak-YYYYMMDD-HHMMSS`。
 
+如果 Windows 执行策略拦截脚本，用：
+
+```powershell
+pwsh -ExecutionPolicy Bypass -File .\scripts\bootstrap.ps1 -Apply
+```
+
 在已有 pi 会话里执行 `/reload`，或新开一个 pi。
 
 ## Windows Terminal
