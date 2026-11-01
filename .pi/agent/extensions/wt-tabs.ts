@@ -53,11 +53,12 @@ export default function (pi: ExtensionAPI) {
   let base = "pi";
   let autoNamed = false;
 
-  const setTitle = (ctx: ExtensionContext, mark = "") => {
+  const setTitle = (ctx: ExtensionContext, mark = "", suffix = "") => {
+    const name = `${mark}${base}${suffix}`;
     if (inTmux && pane) {
-      tmuxRun(["rename-window", "-t", pane, `${mark}${base}`]);
+      tmuxRun(["rename-window", "-t", pane, name]);
     } else {
-      ctx.ui.setTitle(`${mark}${base}`);
+      ctx.ui.setTitle(name);
     }
   };
 
@@ -111,7 +112,8 @@ export default function (pi: ExtensionAPI) {
   });
 
   const finish = (ctx: ExtensionContext, aborted = false) => {
-    setTitle(ctx, aborted ? "✗ " : "✓ ");
+    // 完成标记放在结尾；不要再用 tmux 的 activity 圆点，那个是“后台有输出”就会亮。
+    setTitle(ctx, "", aborted ? " ✗" : " ✓");
     progress(false);
     toast(`pi · ${base}`, aborted ? "已中止" : "已完成，等待输入");
   };
