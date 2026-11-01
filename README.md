@@ -7,76 +7,125 @@
 - **维护**：知道一个改动应该落在哪个文件，不会把 macOS 和 WSL 的配置混在一起。
 - **被理解**：新人或 agent 读完这一页，就能知道仓库里每个东西大致是干什么的。
 
-细节、协议和实现原因看文件里的注释，尤其是 `.pi/agent/extensions/wt-tabs.ts`。
+细节、协议和实现原因看文件里的注释，尤其是 `shared/pi/agent/extensions/wt-tabs.ts`。  
 给 coding agent 的约定见 [AGENTS.md](AGENTS.md)。
+
+## 目录结构
+
+```text
+.
+├── README.md
+├── AGENTS.md
+├── shared/
+│   ├── .vimrc
+│   └── pi/agent/extensions/wt-tabs.ts
+├── macos/
+│   ├── .bash_profile
+│   ├── .zshrc
+│   └── alacritty.toml
+├── wsl/
+│   ├── .bashrc
+│   ├── .tmux.conf
+│   └── config.fish
+├── windows/
+│   └── README.md
+└── scripts/
+    ├── bootstrap.sh
+    └── bootstrap.ps1
+```
+
+根目录保留了一组**兼容软链**，让旧的 `~/.tmux.conf -> ~/config/.tmux.conf`、`~/.pi -> ~/config/.pi` 继续可用：
+
+```text
+.bash_profile -> macos/.bash_profile
+.zshrc        -> macos/.zshrc
+alacritty.toml-> macos/alacritty.toml
+.bashrc       -> wsl/.bashrc
+.tmux.conf    -> wsl/.tmux.conf
+config.fish   -> wsl/config.fish
+.vimrc        -> shared/.vimrc
+.pi           -> shared/pi
+```
+
+新机器不需要依赖这些根软链，直接用 `scripts/bootstrap.sh` 链接平台目录即可。
 
 ## 平台
 
-| 平台 | 主要文件 | 说明 |
+| 平台 | 文件 | 说明 |
 |---|---|---|
-| macOS | `.bash_profile`、`.zshrc`、`alacritty.toml` | 历史配置，路径里有 `/opt/homebrew`、`/Users/syh` |
-| WSL / Ubuntu | `.bashrc`、`.tmux.conf` | 当前主要使用环境 |
-| WSL / Windows Terminal | `.pi/agent/extensions/wt-tabs.ts` | pi 扩展，跨 WSL/tmux 和原生 Windows |
-| 跨平台 | `.vimrc`、`config.fish` | Vim 通用；fish 里混有 macOS/WSL 片段 |
-| Windows | 不在本仓库 | Windows Terminal 的 `settings.json` 和 pi 扩展是单独部署的 |
+| macOS | `macos/.bash_profile`、`macos/.zshrc`、`macos/alacritty.toml` | 历史配置，路径里有 `/opt/homebrew`、`/Users/syh` |
+| WSL / Ubuntu | `wsl/.bashrc`、`wsl/.tmux.conf`、`wsl/config.fish` | 当前主要使用环境 |
+| WSL / Windows Terminal | `shared/pi/agent/extensions/wt-tabs.ts` | pi 扩展，跨 WSL/tmux 和原生 Windows |
+| Windows | `windows/README.md` | Windows Terminal 设置说明；扩展来自 `shared/pi` |
+| 跨平台 | `shared/.vimrc` | Vim 通用配置 |
 
-> 当前仓库不是完整的 dotfiles 安装器：`.tmux.conf` 是软链，`.pi` 扩展在 WSL 是软链；`.bashrc`、`.vimrc`、`config.fish` 更像是“存档/拷贝”，和线上文件可能有 drift。
+> 仓库不是完整的 dotfiles 安装器。`wsl/config.fish`、`wsl/.bashrc`、`shared/.vimrc` 和线上文件仍可能有 drift；覆盖前先 `diff`。
 
-## 快速开始
+## 初始化
 
-1. 先确认自己在哪个平台，**不要直接全量覆盖**。
-2. 需要哪个文件就链接或拷贝哪个，覆盖前先备份；拷贝前先 `diff`，仓库里的 `.bashrc`/`.vimrc`/`config.fish` 不保证等于线上。
-3. 重载对应程序：
+### macOS / WSL
+
+先 dry-run，确认会改哪些文件：
 
 ```bash
-# bash
-source ~/.bashrc
+./scripts/bootstrap.sh --dry-run
+```
 
-# tmux
+实际执行：
+
+```bash
+./scripts/bootstrap.sh --apply
+```
+
+默认用软链；想用拷贝：
+
+```bash
+./scripts/bootstrap.sh --apply --copy
+```
+
+脚本会：
+
+- 自动判断 macOS / Linux（Linux 按 WSL 处理；可用 `--platform macos|wsl` 覆盖）
+- 备份已有目标为 `<target>.bak-YYYYMMDD-HHMMSS`
+- 创建缺失的目录
+- 打印需要重载的程序
+
+### Windows
+
+```powershell
+# 只打印
+pwsh -File .\scripts\bootstrap.ps1
+
+# 复制 pi 扩展
+pwsh -File .\scripts\bootstrap.ps1 -Apply
+```
+
+Windows Terminal 的 `settings.json` **不会**被自动修改；合并说明见 [windows/README.md](windows/README.md)。
+
+### 重载
+
+```bash
+source ~/.bashrc        # bash
 tmux source-file ~/.tmux.conf
-
-# fish
-exec fish
-
-# pi
-# 在 pi 里执行 /reload
+exec fish               # fish
+# pi 里执行 /reload
 ```
-
-### WSL 常用部署
-
-```bash
-ln -sf ~/config/.tmux.conf ~/.tmux.conf
-ln -sf ~/config/.pi/agent/extensions/wt-tabs.ts ~/.pi/agent/extensions/wt-tabs.ts
-```
-
-`.tmux.conf` 会 source `~/.tmux.conf.local`；这个文件是机器本地配置，**不在仓库里**，通常放 TPM、resurrect、continuum 等插件配置。
-
-### Windows 常用部署
-
-把扩展复制到：
-
-```text
-%USERPROFILE%\.pi\agent\extensions\wt-tabs.ts
-```
-
-Windows Terminal 的 `settings.json` 不在本仓库；至少需要：
-
-- `suppressApplicationTitle: false`，否则 tab 标题不会跟着 pi 走
-- `Shift+Enter` 的 `sendInput` 动作，pi 才能插入换行
-- 可选：`tabSwitcherMode: "mru"`，让 `Ctrl+Tab` 按最近使用顺序切换
 
 ## 文件地图
 
 | 文件 | 作用 |
 |---|---|
-| `.bashrc` | WSL/Ubuntu bash 配置：alias、PATH、nvm、conda 等 |
-| `.bash_profile` | macOS 登录 shell 配置，当前 WSL 不用 |
-| `.zshrc` | macOS zsh 配置，当前 WSL 不用 |
-| `.vimrc` | Vim 基础配置 |
-| `config.fish` | fish prompt、alias、环境变量；里面有跨平台/历史片段 |
-| `alacritty.toml` | Alacritty 主题和字体，macOS/Linux 用，WT 不用 |
-| `.tmux.conf` | tmux 主配置：前缀、窗口、copy mode、状态栏、pi 集成 |
-| `.pi/agent/extensions/wt-tabs.ts` | pi 扩展：窗口名/标签名、进度圈、完成通知 |
+| `wsl/.bashrc` | WSL/Ubuntu bash：alias、PATH、nvm、conda 等 |
+| `macos/.bash_profile` | macOS 登录 shell，当前 WSL 不用 |
+| `macos/.zshrc` | macOS zsh，当前 WSL 不用 |
+| `shared/.vimrc` | Vim 基础配置 |
+| `wsl/config.fish` | WSL fish prompt、alias、环境变量；仍有历史 macOS 片段 |
+| `macos/alacritty.toml` | Alacritty 主题和字体，macOS/Linux 用，WT 不用 |
+| `wsl/.tmux.conf` | tmux 主配置：前缀、窗口、copy mode、状态栏、pi 集成 |
+| `shared/pi/agent/extensions/wt-tabs.ts` | pi 扩展：窗口名/标签名、进度圈、完成通知 |
+| `windows/README.md` | WT 设置合并说明 |
+| `scripts/bootstrap.sh` | macOS/WSL 初始化脚本 |
+| `scripts/bootstrap.ps1` | Windows pi 扩展部署脚本 |
 
 ## pi 扩展
 
@@ -100,17 +149,17 @@ Windows Terminal 的 `settings.json` 不在本仓库；至少需要：
 | WSL + tmux + WT | `agent_end` | tmux window name | tmux passthrough | 通过 `powershell.exe` 弹 toast |
 | 其他/SSH | 不启用 | — | — | — |
 
-几个约定：
+约定：
 
 - 只在 `WT_SESSION` 存在时启用；SSH 里不会乱弹通知。
 - WSL 下会关闭该 tmux 窗口的 `automatic-rename`，否则名字会被改回 `pi`。
-- 进度圈依赖 tmux 的 `allow-passthrough on`；`.tmux.conf` 已配置。
+- 进度圈依赖 tmux 的 `allow-passthrough on`；`wsl/.tmux.conf` 已配置。
 - 不会自动移动 tab/window。WT 没有这个 API；需要时用 `Ctrl+Shift+Left/Right` 手动挪。
 - 完成通知和 tmux 的 activity 监控是两回事。不要用 `monitor-activity` 做“完成”提示，它会对任何后台输出亮灯/响铃。
 
 ## tmux
 
-当前约定：
+当前约定（`wsl/.tmux.conf`）：
 
 - Prefix：`Ctrl+\`
 - 窗口从 1 开始编号
@@ -123,62 +172,22 @@ Windows Terminal 的 `settings.json` 不在本仓库；至少需要：
 
 - `prefix + R/C/|/-` 依赖 `tmux-commands`，`prefix + S` 依赖 `tmux-sessions`，`prefix + P` 依赖 `~/.dotfiles/...`；这些 helper 目前不在仓库/PATH 里。
 - TPM 插件（resurrect、continuum）需要另外安装；仓库只保存配置，不保存 `~/.tmux/plugins`。
+- `~/.tmux.conf.local` 是机器本地文件，不在仓库；它通常放 TPM、resurrect、continuum 配置。
 
 ## 扩展新配置
 
 新增一个工具的配置时：
 
-1. 先判断平台：shared / macOS / WSL / Windows。
-2. 放进对应目录（见下面的“整理建议”），文件名尽量保持工具默认路径。
+1. 判断平台：`shared/`、`macos/`、`wsl/`、`windows/`。
+2. 放进去，文件名尽量保持工具默认路径。
 3. 更新本 README 的文件地图和部署说明。
-4. 做最小验证：
+4. 更新 `scripts/bootstrap.sh` / `bootstrap.ps1` 的部署列表。
+5. 做最小验证：
    - bash：`bash -n`
    - fish：`fish -n`
    - tmux：`tmux source-file ~/.tmux.conf`
    - pi 扩展：`bun build ... --external '@earendil-works/pi-coding-agent'`，然后在新的 pi 会话里 `/reload`
-5. 用中文短标题提交，一个提交只做一件事。
-
-## 整理建议
-
-现在的问题是**平铺 + 平台混杂**：
-
-- macOS 文件（`.bash_profile`、`.zshrc`、`alacritty.toml`）和 WSL 文件（`.bashrc`、`.tmux.conf`）混在根目录。
-- `config.fish` 同时有 macOS、WSL、Wayland 片段。
-- 软链/拷贝状态不一致，新人不知道哪个是“活的”。
-- 没有初始化脚本，换机器只能靠记忆。
-
-建议逐步整理成：
-
-```text
-.
-├── README.md
-├── AGENTS.md
-├── shared/
-│   ├── .vimrc
-│   └── pi/agent/extensions/wt-tabs.ts
-├── macos/
-│   ├── .bash_profile
-│   ├── .zshrc
-│   ├── alacritty.toml
-│   └── config.fish
-├── wsl/
-│   ├── .bashrc
-│   ├── .tmux.conf
-│   └── config.fish
-├── windows/
-│   └── README.md              # WT 设置说明 / pi 扩展部署
-└── scripts/
-    ├── bootstrap.sh           # macOS/WSL: 检测平台、备份、link/copy
-    └── bootstrap.ps1          # Windows: 复制 pi 扩展
-```
-
-迁移步骤建议：
-
-1. 先加 `bootstrap.sh --dry-run`，只打印“会改哪些文件”，不实际动。
-2. 再把文件移动到平台目录，保留根目录兼容软链（例如 `.tmux.conf -> wsl/.tmux.conf`）。
-3. 最后更新本 README 和 `~/.tmux.conf` 的软链目标。
-
-在迁移完成前，**根目录布局仍然是唯一约定**；不要同时维护两套路径。
+6. 用中文短标题提交，一个提交只做一件事。
 
 ## 安全
 
